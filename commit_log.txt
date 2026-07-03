@@ -18,3 +18,4 @@ Commit 16 - perf: use requestAnimationFrame throttling for GSAP mouse move at 20
 Commit 17 - docs: add live testnet faucet guides at 2026-07-04T18:47:00
 Commit 18 - feat: add telemetry metrics logging to local session console at 2026-07-04T15:03:00
 Commit 19 - fix: resolve border clipping issues on mobile Safari at 2026-07-02T11:46:00
+Commit 20 - style: adjust emissive glow intensity of teal collateral token at 2026-07-03T09:56:00
