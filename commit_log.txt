@@ -1,1 +1,2 @@
 Commit 0 - perf: optimize WebGL vertex buffers in Three.js scene at 2026-07-04T18:10:00
+Commit 1 - refactor: restructure HSL color scale custom properties at 2026-07-03T17:47:00
