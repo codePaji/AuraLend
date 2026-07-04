@@ -6,3 +6,4 @@ Commit 4 - style: add micro-animations to active vault cards at 2026-07-06T12:04
 Commit 5 - perf: throttle window resize listener to 100ms at 2026-07-04T17:28:00
 Commit 6 - docs: add Freighter installation link to error banner at 2026-07-06T15:12:00
 Commit 7 - refactor: simplify hook dependencies in useStellarWallet at 2026-07-03T15:43:00
+Commit 8 - feat: add local storage caching for active position details at 2026-07-04T19:57:00
