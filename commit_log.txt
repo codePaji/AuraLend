@@ -15,3 +15,4 @@ Commit 13 - refactor: consolidate utility helper classes at 2026-07-05T19:09:00
 Commit 14 - fix: correct coordinate calculation for Bezier cashflow curve at 2026-07-02T12:29:00
 Commit 15 - style: optimize margin spacing on landing page columns at 2026-07-06T13:44:00
 Commit 16 - perf: use requestAnimationFrame throttling for GSAP mouse move at 2026-07-06T14:06:00
+Commit 17 - docs: add live testnet faucet guides at 2026-07-04T18:47:00
