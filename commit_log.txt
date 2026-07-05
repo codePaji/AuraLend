@@ -11,3 +11,4 @@ Commit 9 - fix: prevent null pointer exception on disconnected wallet views at 2
 Commit 10 - style: clean up inline CSS properties from list items at 2026-07-05T20:19:00
 Commit 11 - perf: precompile 3D materials for smoother initial load at 2026-07-03T12:15:00
 Commit 12 - docs: document smart contract entrypoints in contracts folder at 2026-07-06T18:13:00
+Commit 13 - refactor: consolidate utility helper classes at 2026-07-05T19:09:00
