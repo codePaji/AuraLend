@@ -73,3 +73,5 @@ This MVP is designed for testnet onboarding:
 3.  Perform deposits and withdrawals to test **Lending Vault** smart contract interactions.
 4.  Specify leverage factors and click **Open Leveraged Position** to test atomic yield loops.
 5.  Monitor your transactions and network metrics in real-time under the **Activity** tab.
+
+<!-- Verified Production MVP Build -->
