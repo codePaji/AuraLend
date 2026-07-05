@@ -1,0 +1,17 @@
+[package]
+name = "leverage-engine"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["lib", "cdylib"]
+doctest = false
+
+[dependencies]
+soroban-sdk = { workspace = true }
+
+[dev-dependencies]
+lending-pool = { path = "../lending_pool" }
+mock-amm = { path = "../mock_amm" }
+soroban-sdk = { workspace = true, features = ["testutils"] }
