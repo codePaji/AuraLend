@@ -18,7 +18,7 @@ fn test_integration_flow() {
 
     let admin = Address::generate(&env);
     let user = Address::generate(&env);
-    let liquidator = Address::generate(&env);
+    let _liquidator = Address::generate(&env);
     let lender = Address::generate(&env);
 
     // 1. Deploy Mock USDC (Token A) and Mock XLM (Token B)
@@ -26,7 +26,7 @@ fn test_integration_flow() {
     let token_b_id = env.register_stellar_asset_contract_v2(admin.clone()).address();
 
     let token_a_client = TokenClient::new(&env, &token_a_id);
-    let token_b_client = TokenClient::new(&env, &token_b_id);
+    let _token_b_client = TokenClient::new(&env, &token_b_id);
 
     let token_a_admin = StellarAssetClient::new(&env, &token_a_id);
     let token_b_admin = StellarAssetClient::new(&env, &token_b_id);
@@ -37,7 +37,7 @@ fn test_integration_flow() {
 
     // 3. Deploy Mock AMM Contract
     let amm_id = env.register(MockAmmContract, (token_a_id.clone(), token_b_id.clone()));
-    let amm_client = MockAmmContractClient::new(&env, &amm_id);
+    let _amm_client = MockAmmContractClient::new(&env, &amm_id);
 
     // 4. Deploy Leverage Engine Contract
     let engine_id = env.register(
@@ -121,7 +121,7 @@ fn test_liquidation_flow() {
     let token_b_id = env.register_stellar_asset_contract_v2(admin.clone()).address();
 
     let token_a_client = TokenClient::new(&env, &token_a_id);
-    let token_b_client = TokenClient::new(&env, &token_b_id);
+    let _token_b_client = TokenClient::new(&env, &token_b_id);
 
     let token_a_admin = StellarAssetClient::new(&env, &token_a_id);
     let token_b_admin = StellarAssetClient::new(&env, &token_b_id);
@@ -130,7 +130,7 @@ fn test_liquidation_flow() {
     let pool_client = LendingPoolContractClient::new(&env, &pool_id);
 
     let amm_id = env.register(MockAmmContract, (token_a_id.clone(), token_b_id.clone()));
-    let amm_client = MockAmmContractClient::new(&env, &amm_id);
+    let _amm_client = MockAmmContractClient::new(&env, &amm_id);
 
     let engine_id = env.register(
         LeverageEngineContract,
