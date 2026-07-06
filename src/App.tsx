@@ -445,7 +445,7 @@ export default function App() {
   const checkConnection = async () => {
     try {
       const connectedRes = await isConnected();
-      if (connectedRes && connectedRes.isConnected) {
+      if (connectedRes) {
         const addressRes = await getAddress();
         if (addressRes && addressRes.address) {
           setUserAddress(addressRes.address);
@@ -461,7 +461,7 @@ export default function App() {
   const connectWallet = async () => {
     try {
       const connectedRes = await isConnected();
-      if (!connectedRes || !connectedRes.isConnected) {
+      if (!connectedRes) {
         showFeedback("info", "Please install/unlock Freighter browser extension.");
         return;
       }
