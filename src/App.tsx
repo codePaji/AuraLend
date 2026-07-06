@@ -13,7 +13,7 @@ import {
 } from "lucide-react";
 import * as THREE from "three";
 import gsap from "gsap";
-import { isConnected, getAddress, signTransaction } from "@stellar/freighter-api";
+import { isConnected, getAddress, signTransaction, requestAccess } from "@stellar/freighter-api";
 import { Transaction } from "@stellar/stellar-sdk";
 import { rpc, horizon } from "./lib/stellar";
 import { PriceChart } from "./components/PriceChart";
@@ -444,12 +444,14 @@ export default function App() {
 
   const checkConnection = async () => {
     try {
-      const addressRes = await getAddress();
-      const address = typeof addressRes === "string" ? addressRes : (addressRes && (addressRes as any).address);
-      if (address) {
-        setUserAddress(address);
-        setWalletConnected(true);
-        setActiveTab("farm");
+      const connectedRes = await isConnected();
+      if (connectedRes.isConnected && !connectedRes.error) {
+        const addressRes = await getAddress();
+        if (addressRes.address && !addressRes.error) {
+          setUserAddress(addressRes.address);
+          setWalletConnected(true);
+          setActiveTab("farm");
+        }
       }
     } catch (err) {
       console.warn("Freighter auto-connection check bypassed", err);
@@ -458,15 +460,19 @@ export default function App() {
 
   const connectWallet = async () => {
     try {
-      const addressRes = await getAddress();
-      const address = typeof addressRes === "string" ? addressRes : (addressRes && (addressRes as any).address);
-      if (address) {
-        setUserAddress(address);
+      // requestAccess() triggers the Freighter popup asking user to grant permission
+      const accessRes = await requestAccess();
+      if (accessRes.error) {
+        showFeedback("info", "Please install or unlock your Freighter browser extension.");
+        return;
+      }
+      if (accessRes.address) {
+        setUserAddress(accessRes.address);
         setWalletConnected(true);
         setActiveTab("farm");
         showFeedback("success", "Freighter Wallet Connected Successfully!");
       } else {
-        showFeedback("info", "Please install/unlock Freighter browser extension.");
+        showFeedback("info", "Please install or unlock your Freighter browser extension.");
       }
     } catch (err: any) {
       console.error("Freighter connection failed:", err);
