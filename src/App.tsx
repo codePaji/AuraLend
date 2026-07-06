@@ -445,8 +445,9 @@ export default function App() {
   const checkConnection = async () => {
     try {
       const addressRes = await getAddress();
-      if (addressRes && addressRes.address) {
-        setUserAddress(addressRes.address);
+      const address = typeof addressRes === "string" ? addressRes : (addressRes && (addressRes as any).address);
+      if (address) {
+        setUserAddress(address);
         setWalletConnected(true);
         setActiveTab("farm");
       }
@@ -458,8 +459,9 @@ export default function App() {
   const connectWallet = async () => {
     try {
       const addressRes = await getAddress();
-      if (addressRes && addressRes.address) {
-        setUserAddress(addressRes.address);
+      const address = typeof addressRes === "string" ? addressRes : (addressRes && (addressRes as any).address);
+      if (address) {
+        setUserAddress(address);
         setWalletConnected(true);
         setActiveTab("farm");
         showFeedback("success", "Freighter Wallet Connected Successfully!");
