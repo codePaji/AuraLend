@@ -4,3 +4,4 @@ Commit 2 - docs: update client wallet onboarding walkthrough at 2026-07-06T11:41
 Commit 3 - fix: prevent memory leak on 3D component unmount at 2026-07-04T20:48:00
 Commit 4 - style: add micro-animations to active vault cards at 2026-07-06T12:04:00
 Commit 5 - perf: throttle window resize listener to 100ms at 2026-07-04T17:28:00
+Commit 6 - docs: add Freighter installation link to error banner at 2026-07-06T15:12:00
