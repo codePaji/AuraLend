@@ -7,3 +7,4 @@ Commit 5 - perf: throttle window resize listener to 100ms at 2026-07-04T17:28:00
 Commit 6 - docs: add Freighter installation link to error banner at 2026-07-06T15:12:00
 Commit 7 - refactor: simplify hook dependencies in useStellarWallet at 2026-07-03T15:43:00
 Commit 8 - feat: add local storage caching for active position details at 2026-07-04T19:57:00
+Commit 9 - fix: prevent null pointer exception on disconnected wallet views at 2026-07-06T19:24:00
