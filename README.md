@@ -291,3 +291,7 @@ Continuous Integration is configured via GitHub Actions. Every push to the main 
 
 ### Mobile Responsive UI
 ![Mobile Layout](sub%20assets/mobui.png)
+
+### CI/CD Pipeline
+![CI/CD Build Run](sub%20assets/cicd.png)
+
