@@ -444,36 +444,31 @@ export default function App() {
 
   const checkConnection = async () => {
     try {
-      const connectedRes = await isConnected();
-      if (connectedRes) {
-        const addressRes = await getAddress();
-        if (addressRes && addressRes.address) {
-          setUserAddress(addressRes.address);
-          setWalletConnected(true);
-          setActiveTab("farm");
-        }
+      const addressRes = await getAddress();
+      if (addressRes && addressRes.address) {
+        setUserAddress(addressRes.address);
+        setWalletConnected(true);
+        setActiveTab("farm");
       }
     } catch (err) {
-      console.error("Freighter connection check failed", err);
+      console.warn("Freighter auto-connection check bypassed", err);
     }
   };
 
   const connectWallet = async () => {
     try {
-      const connectedRes = await isConnected();
-      if (!connectedRes) {
-        showFeedback("info", "Please install/unlock Freighter browser extension.");
-        return;
-      }
       const addressRes = await getAddress();
       if (addressRes && addressRes.address) {
         setUserAddress(addressRes.address);
         setWalletConnected(true);
         setActiveTab("farm");
         showFeedback("success", "Freighter Wallet Connected Successfully!");
+      } else {
+        showFeedback("info", "Please install/unlock Freighter browser extension.");
       }
     } catch (err: any) {
-      showFeedback("error", err.message || "Freighter connection failed.");
+      console.error("Freighter connection failed:", err);
+      showFeedback("error", "Freighter connection failed. Please ensure the extension is installed and unlocked.");
     }
   };
 
