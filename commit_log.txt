@@ -2,3 +2,4 @@ Commit 0 - perf: optimize WebGL vertex buffers in Three.js scene at 2026-07-04T1
 Commit 1 - refactor: restructure HSL color scale custom properties at 2026-07-03T17:47:00
 Commit 2 - docs: update client wallet onboarding walkthrough at 2026-07-06T11:41:00
 Commit 3 - fix: prevent memory leak on 3D component unmount at 2026-07-04T20:48:00
+Commit 4 - style: add micro-animations to active vault cards at 2026-07-06T12:04:00
