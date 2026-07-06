@@ -13,3 +13,4 @@ Commit 11 - perf: precompile 3D materials for smoother initial load at 2026-07-0
 Commit 12 - docs: document smart contract entrypoints in contracts folder at 2026-07-06T18:13:00
 Commit 13 - refactor: consolidate utility helper classes at 2026-07-05T19:09:00
 Commit 14 - fix: correct coordinate calculation for Bezier cashflow curve at 2026-07-02T12:29:00
+Commit 15 - style: optimize margin spacing on landing page columns at 2026-07-06T13:44:00
