@@ -69,8 +69,8 @@ AuraLend leverages Stellar's specific properties to enable premium capital effic
 |----------|------|
 | **Live dApp** | [auralend.netlify.app](https://auralend.netlify.app/) |
 | **GitHub Repo** | [codePaji/AuraLend](https://github.com/codePaji/AuraLend) |
-| **Feedback Form** | [AuraLend Feedback - Google Forms](https://forms.gle/sE8QTDWDodg2cs2T7) |
-| **Onboarded Users & Wallet Interactions** | [Responses Spreadsheet - Google Sheets](https://docs.google.com/spreadsheets/d/1fHMaIiXoWxpco0DZpuwzqAlIIUg6lDGEvKc1Ep5Mfus/edit?usp=sharing) |
+| **Feedback Form** | [AuraLend Feedback - Google Forms](https://forms.gle/P7WqySsrm2sU5VNaA) |
+| **Onboarded Users & Wallet Interactions** | [Responses Spreadsheet - Google Sheets](https://docs.google.com/spreadsheets/d/16GnPBLH7eYjql3tjZVigvS6nOCbgT_NPf_kfM74EMo4/edit?usp=sharing) |
 
 ---
 
@@ -102,8 +102,8 @@ To meet Level 4 validation requirements, users can perform onboarding actions on
 
 | Resource | Link |
 |----------|------|
-| **Feedback Form** | [Submit Feedback](https://forms.gle/sE8QTDWDodg2cs2T7) |
-| **User Responses & Wallet Proof** | [View Spreadsheet](https://docs.google.com/spreadsheets/d/1fHMaIiXoWxpco0DZpuwzqAlIIUg6lDGEvKc1Ep5Mfus/edit?usp=sharing) |
+| **Feedback Form** | [Submit Feedback](https://forms.gle/P7WqySsrm2sU5VNaA) |
+| **User Responses & Wallet Proof** | [View Spreadsheet](https://docs.google.com/spreadsheets/d/16GnPBLH7eYjql3tjZVigvS6nOCbgT_NPf_kfM74EMo4/edit?usp=sharing) |
 
 ---
 
