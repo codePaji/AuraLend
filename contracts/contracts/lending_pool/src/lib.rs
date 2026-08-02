@@ -58,6 +58,16 @@ pub struct RepayEvent {
 const MIN_TTL: u32 = 17280;
 const EXTEND_TO: u32 = 518400;
 
+// Composite snapshot of pool state, returned in a single batch getter call
+#[contracttype]
+#[derive(Clone)]
+pub struct PoolStats {
+    pub total_liquidity: i128,
+    pub total_borrowed: i128,
+    pub borrow_rate: i128,
+    pub utilization_rate: i128,
+}
+
 #[contract]
 pub struct LendingPoolContract;
 
