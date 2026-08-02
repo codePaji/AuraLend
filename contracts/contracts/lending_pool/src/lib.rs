@@ -275,4 +275,16 @@ impl LendingPoolContract {
     pub fn get_total_borrowed(env: Env) -> i128 {
         env.storage().instance().get(&DataKey::TotalBorrowed).unwrap_or(0)
     }
+
+    // Query pool utilization rate scaled to 7 decimal places
+    // e.g. 4_000_000 = 40.0% utilization
+    pub fn get_utilization_rate(env: Env) -> i128 {
+        let borrowed: i128 = env.storage().instance().get(&DataKey::TotalBorrowed).unwrap_or(0);
+        let liquidity: i128 = env.storage().instance().get(&DataKey::TotalLiquidity).unwrap_or(0);
+        let total_assets = liquidity + borrowed;
+        if total_assets == 0 {
+            return 0;
+        }
+        (borrowed * 10_000_000) / total_assets
+    }
 }
