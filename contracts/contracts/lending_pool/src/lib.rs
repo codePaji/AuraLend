@@ -297,4 +297,30 @@ impl LendingPoolContract {
         }
         (borrowed * 10_000_000) / total_assets
     }
+
+    // Returns all key pool statistics in a single call to cut frontend RPC round-trips
+    pub fn get_pool_stats(env: Env) -> PoolStats {
+        let total_liquidity: i128 = env.storage().instance().get(&DataKey::TotalLiquidity).unwrap_or(0);
+        let total_borrowed: i128 = env.storage().instance().get(&DataKey::TotalBorrowed).unwrap_or(0);
+        let total_assets = total_liquidity + total_borrowed;
+
+        let borrow_rate = if total_assets == 0 {
+            200_000i128
+        } else {
+            200_000i128 + (total_borrowed * 800_000) / total_assets
+        };
+
+        let utilization_rate = if total_assets == 0 {
+            0
+        } else {
+            (total_borrowed * 10_000_000) / total_assets
+        };
+
+        PoolStats {
+            total_liquidity,
+            total_borrowed,
+            borrow_rate,
+            utilization_rate,
+        }
+    }
 }
