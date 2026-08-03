@@ -23,6 +23,10 @@ pub enum Error {
     InvalidAmount = 3,
 }
 
+// TTL Limits: ~1 day minimum threshold, ~30 days extension target
+const MIN_TTL: u32 = 17280;
+const EXTEND_TO: u32 = 518400;
+
 #[contract]
 pub struct MockAmmContract;
 
