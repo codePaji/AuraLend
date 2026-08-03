@@ -36,6 +36,9 @@ pub enum Error {
     PositionHealthy = 6,
 }
 
+// Minimum collateral required to open a position (1 USDC = 10_000_000 raw units with 7 decimals)
+pub const MIN_COLLATERAL: i128 = 10_000_000;
+
 #[contractevent]
 pub struct PositionOpened {
     pub user: Address,
@@ -303,9 +306,15 @@ impl LeverageEngineContract {
                 if p.borrow_amount == 0 {
                     1000
                 } else {
-                    ((p.lp_shares * 80) / p.borrow_amount) as u32
+                    let raw = (p.lp_shares * 80) / p.borrow_amount;
+                    raw.try_into().unwrap_or(u32::MAX)
                 }
             }
         }
+    }
+
+    // Returns the minimum collateral required to open a position (7 decimal precision)
+    pub fn get_min_collateral(_env: Env) -> i128 {
+        MIN_COLLATERAL
     }
 }
