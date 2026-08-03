@@ -84,6 +84,8 @@ impl MockAmmContract {
         let key = DataKey::LpBalance(user.clone());
         let current_balance: i128 = env.storage().persistent().get(&key).unwrap_or(0);
         env.storage().persistent().set(&key, &(current_balance + shares));
+        // Extend TTL so LP balance entries don't silently expire
+        env.storage().persistent().extend_ttl(&key, MIN_TTL, EXTEND_TO);
 
         let total_key = DataKey::TotalShares;
         let current_total: i128 = env.storage().instance().get(&total_key).unwrap_or(0);
@@ -118,7 +120,13 @@ impl MockAmmContract {
         client_b.transfer(&env.current_contract_address(), &user, &amount_b);
 
         // Update balances
-        env.storage().persistent().set(&key, &(current_balance - shares));
+        let new_lp_balance = current_balance - shares;
+        if new_lp_balance == 0 {
+            env.storage().persistent().remove(&key);
+        } else {
+            env.storage().persistent().set(&key, &new_lp_balance);
+            env.storage().persistent().extend_ttl(&key, MIN_TTL, EXTEND_TO);
+        }
 
         let total_key = DataKey::TotalShares;
         let current_total: i128 = env.storage().instance().get(&total_key).unwrap_or(0);
