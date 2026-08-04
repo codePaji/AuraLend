@@ -191,3 +191,46 @@ fn test_liquidation_flow() {
     assert_eq!(token_a_client.balance(&liquidator), 7);
     assert_eq!(token_a_client.balance(&user2), 71);
 }
+
+#[test]
+fn test_health_factor_boundary() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let user = Address::generate(&env);
+    let lender = Address::generate(&env);
+
+    let token_a_id = env.register_stellar_asset_contract_v2(admin.clone()).address();
+    let token_b_id = env.register_stellar_asset_contract_v2(admin.clone()).address();
+
+    let token_a_admin = soroban_sdk::token::StellarAssetClient::new(&env, &token_a_id);
+    let token_b_admin = soroban_sdk::token::StellarAssetClient::new(&env, &token_b_id);
+
+    let pool_id = env.register(lending_pool::LendingPoolContract, (admin.clone(), token_a_id.clone()));
+    let pool_client = lending_pool::LendingPoolContractClient::new(&env, &pool_id);
+    let amm_id = env.register(mock_amm::MockAmmContract, (token_a_id.clone(), token_b_id.clone()));
+    let engine_id = env.register(
+        LeverageEngineContract,
+        (admin.clone(), token_a_id.clone(), token_b_id.clone(), pool_id.clone(), amm_id.clone()),
+    );
+    let engine_client = LeverageEngineContractClient::new(&env, &engine_id);
+    pool_client.set_leverage_engine(&engine_id);
+
+    token_a_admin.mint(&lender, &5000);
+    token_a_admin.mint(&amm_id, &5000);
+    token_b_admin.mint(&amm_id, &5000);
+    pool_client.deposit(&lender, &5000);
+
+    // No position: health factor defaults to max (1000)
+    assert_eq!(engine_client.get_health_factor(&user), 1000);
+
+    // Open position with 3x leverage
+    token_a_admin.mint(&user, &200);
+    engine_client.open_position(&user, &100, &300u32);
+    // Health: (300 * 80) / 200 = 120
+    assert_eq!(engine_client.get_health_factor(&user), 120);
+
+    // Verify get_min_collateral returns the expected protocol constant
+    assert_eq!(engine_client.get_min_collateral(), 10_000_000);
+}
