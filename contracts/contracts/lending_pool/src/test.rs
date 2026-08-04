@@ -107,3 +107,37 @@ fn test_utilization_rate() {
     // Utilization = 400 / (600 + 400) = 40% = 4_000_000 (7 decimals)
     assert_eq!(client.get_utilization_rate(), 4_000_000);
 }
+
+#[test]
+fn test_pool_stats_batch() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let lender = Address::generate(&env);
+    let engine = Address::generate(&env);
+
+    let token_id = env.register_stellar_asset_contract_v2(admin.clone()).address();
+    let token_admin = soroban_sdk::token::StellarAssetClient::new(&env, &token_id);
+
+    let contract_id = env.register(LendingPoolContract, (admin.clone(), token_id.clone()));
+    let client = LendingPoolContractClient::new(&env, &contract_id);
+
+    // Set up pool: deposit 2000, borrow 1000 (50% utilization)
+    token_admin.mint(&lender, &2000);
+    client.deposit(&lender, &2000);
+    client.set_leverage_engine(&engine);
+    token_admin.mint(&contract_id, &2000);
+    client.borrow(&lender, &1000);
+
+    let stats = client.get_pool_stats();
+
+    // get_pool_stats results should match individual getter results
+    assert_eq!(stats.total_liquidity, client.get_total_liquidity());
+    assert_eq!(stats.total_borrowed, client.get_total_borrowed());
+    assert_eq!(stats.borrow_rate, client.get_borrow_rate());
+    assert_eq!(stats.utilization_rate, client.get_utilization_rate());
+
+    // Verify 50% utilization = 5_000_000 in 7 decimal precision
+    assert_eq!(stats.utilization_rate, 5_000_000);
+}
