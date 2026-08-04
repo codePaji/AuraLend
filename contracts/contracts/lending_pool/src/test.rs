@@ -75,3 +75,35 @@ fn test_errors() {
     let negative_deposit_res = client.try_deposit(&user, &-50i128);
     assert!(negative_deposit_res.is_err());
 }
+
+#[test]
+fn test_utilization_rate() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let user = Address::generate(&env);
+    let engine = Address::generate(&env); // Simulated leverage engine
+
+    let token_id = env.register_stellar_asset_contract_v2(admin.clone()).address();
+    let token_admin = soroban_sdk::token::StellarAssetClient::new(&env, &token_id);
+
+    let contract_id = env.register(LendingPoolContract, (admin.clone(), token_id.clone()));
+    let client = LendingPoolContractClient::new(&env, &contract_id);
+
+    // Empty pool: utilization should be 0
+    assert_eq!(client.get_utilization_rate(), 0);
+
+    // Deposit 1000 from user
+    token_admin.mint(&user, &1000);
+    client.deposit(&user, &1000);
+    assert_eq!(client.get_utilization_rate(), 0); // nothing borrowed yet
+
+    // Register engine and borrow 400
+    client.set_leverage_engine(&engine);
+    token_admin.mint(&contract_id, &1000); // seed contract so it can transfer
+    client.borrow(&user, &400);
+
+    // Utilization = 400 / (600 + 400) = 40% = 4_000_000 (7 decimals)
+    assert_eq!(client.get_utilization_rate(), 4_000_000);
+}
