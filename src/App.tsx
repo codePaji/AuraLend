@@ -686,6 +686,11 @@ export default function App() {
   // Withdraw USDC from Lending Pool
   const handleWithdraw = async () => {
     if (!withdrawAmount || Number(withdrawAmount) <= 0) return;
+    const withdrawNum = Number(withdrawAmount);
+    if (withdrawNum > Number(poolCollateral)) {
+      showFeedback("error", "Withdraw amount exceeds your deposited pool balance.");
+      return;
+    }
     setLoading(true);
     showFeedback("info", "Submitting USDC withdrawal request...");
     try {
