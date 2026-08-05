@@ -431,15 +431,19 @@ export default function App() {
 
   // Check Freighter connection on load
   useEffect(() => {
+    let mounted = true;
     checkConnection();
-    fetchMarketMetrics();
+    if (mounted) fetchMarketMetrics();
+    return () => { mounted = false; };
   }, []);
 
   // Fetch balances when user address updates
   useEffect(() => {
-    if (userAddress) {
+    let mounted = true;
+    if (userAddress && mounted) {
       fetchUserBalances();
     }
+    return () => { mounted = false; };
   }, [userAddress]);
 
   const checkConnection = async () => {
