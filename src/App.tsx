@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { 
   TrendingUp, 
   Layers, 
@@ -832,8 +832,8 @@ export default function App() {
     setEvents((prev) => [newEvent, ...prev]);
   };
 
-  // Estimated APY Multiplier
-  const estYield = (4.5 * leverage).toFixed(2);
+  // Estimated APY Multiplier — memoized to avoid recomputing on every render
+  const estYield = useMemo(() => (4.5 * leverage).toFixed(2), [leverage]);
 
   return (
     <div className="app-shell">
