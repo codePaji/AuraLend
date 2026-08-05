@@ -630,6 +630,11 @@ export default function App() {
   // Deposit USDC into Lending Pool
   const handleDeposit = async () => {
     if (!depositAmount || Number(depositAmount) <= 0) return;
+    const depositNum = Number(depositAmount);
+    if (depositNum > Number(usdcBalance)) {
+      showFeedback("error", "Deposit amount exceeds your available USDC balance.");
+      return;
+    }
     setLoading(true);
     showFeedback("info", "Submitting USDC deposit request...");
     try {
