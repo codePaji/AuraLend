@@ -1541,6 +1541,11 @@ export default function App() {
                       <div className="tnum font-display" style={{ fontSize: "24px", fontWeight: 600, marginTop: "4px" }}>
                         {activePosition ? `${activePosition.collateral} USDC` : "None"}
                       </div>
+                      {activePosition && (
+                        <div style={{ marginTop: "10px" }}>
+                          <RiskBadge healthFactor={activePosition.healthFactor} size="sm" />
+                        </div>
+                      )}
                     </div>
 
                     <div style={{ background: "rgb(var(--canvas))", padding: "20px", borderRadius: "8px", border: "1px solid rgb(var(--hairline))" }}>
