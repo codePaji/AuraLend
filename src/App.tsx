@@ -12,6 +12,7 @@ import {
   RefreshCw
 } from "lucide-react";
 import * as THREE from "three";
+import { RiskBadge } from "./components/RiskBadge";
 import gsap from "gsap";
 import { isConnected, getAddress, signTransaction, requestAccess } from "@stellar/freighter-api";
 import { Transaction } from "@stellar/stellar-sdk";
@@ -1479,9 +1480,7 @@ export default function App() {
                       <div className="card-premium active-glow sheen">
                         <h4 className="card-title font-display" style={{ display: "flex", justifyItems: "center", justifyContent: "space-between", alignItems: "center" }}>
                           <span>Your Active Leveraged Position</span>
-                          <span className={`badge-premium ${activePosition.healthFactor >= 100 ? "badge-green" : "badge-rose"}`}>
-                            Health Factor: {(activePosition.healthFactor / 100).toFixed(2)}
-                          </span>
+                          <RiskBadge healthFactor={activePosition.healthFactor} />
                         </h4>
 
                         <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "16px", marginBottom: "20px" }}>
