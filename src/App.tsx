@@ -376,7 +376,7 @@ const AuraThreeDScene = () => {
 
 export default function App() {
   // Navigation & UI States
-  const [activeTab, setActiveTab] = useState<"markets" | "farm" | "portfolio" | "activity" | "sandbox">("farm");
+  const [activeTab, setActiveTab] = useState<"markets" | "farm" | "portfolio" | "activity" | "analytics" | "sandbox">("farm");
   const [walletConnected, setWalletConnected] = useState(false);
   const [userAddress, setUserAddress] = useState("");
   const [xlmBalance, setXlmBalance] = useState("0");
@@ -446,6 +446,15 @@ export default function App() {
     }
     return () => { mounted = false; };
   }, [userAddress]);
+
+  // Auto-refresh market metrics every 30s when on the analytics tab
+  useEffect(() => {
+    if (activeTab !== "analytics") return;
+    const interval = setInterval(() => {
+      fetchMarketMetrics();
+    }, 30_000);
+    return () => clearInterval(interval);
+  }, [activeTab]);
 
   const checkConnection = async () => {
     try {
@@ -893,6 +902,13 @@ export default function App() {
                 style={{ background: "transparent", border: "none", fontSize: "13.5px", cursor: "pointer", color: activeTab === "activity" ? "rgb(var(--brand))" : "rgb(var(--ink-muted))", fontWeight: activeTab === "activity" ? 600 : 400, padding: 0 }}
               >
                 Activity
+              </button>
+              <button 
+                onClick={() => setActiveTab("analytics")} 
+                className="font-display" 
+                style={{ background: "transparent", border: "none", fontSize: "13.5px", cursor: "pointer", color: activeTab === "analytics" ? "rgb(var(--brand))" : "rgb(var(--ink-muted))", fontWeight: activeTab === "analytics" ? 600 : 400, padding: 0 }}
+              >
+                Analytics
               </button>
               <button 
                 onClick={() => setActiveTab("sandbox")} 
