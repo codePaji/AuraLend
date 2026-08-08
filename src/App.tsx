@@ -1717,25 +1717,33 @@ export default function App() {
 
                     <div className="card-premium sheen" style={{ gridColumn: "span 8", padding: "24px" }}>
                       <h3 className="card-title font-display" style={{ fontSize: "14px", fontWeight: 600, marginBottom: "16px" }}>TVL History</h3>
-                      <div style={{ display: "flex", alignItems: "flex-end", gap: "6px", height: "130px", padding: "0 4px" }}>
-                        {[98000, 105000, 112000, 108000, 115000, 121000, poolTvl].map((val, i) => {
-                          const max = Math.max(98000, 105000, 112000, 108000, 115000, 121000, poolTvl);
-                          const pct = (val / max) * 100;
-                          const isLast = i === 6;
-                          return (
-                            <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
-                              <div style={{ fontSize: "9px", color: "rgb(var(--ink-faint))", fontFamily: "var(--font-mono)" }}>
-                                ${(val / 1000).toFixed(0)}k
+                      <div style={{ position: "relative", height: "160px" }}>
+                        {/* Y-axis labels */}
+                        <div style={{ position: "absolute", left: 0, top: 0, bottom: 24, display: "flex", flexDirection: "column", justifyContent: "space-between", fontSize: "9px", color: "rgb(var(--ink-faint))", fontFamily: "var(--font-mono)", paddingRight: "4px" }}>
+                          <span>100%</span>
+                          <span>50%</span>
+                          <span>0%</span>
+                        </div>
+                        <div style={{ marginLeft: "28px", display: "flex", alignItems: "flex-end", gap: "6px", height: "130px", padding: "0 4px" }}>
+                          {[98000, 105000, 112000, 108000, 115000, 121000, poolTvl].map((val, i) => {
+                            const max = Math.max(98000, 105000, 112000, 108000, 115000, 121000, poolTvl);
+                            const pct = (val / max) * 100;
+                            const isLast = i === 6;
+                            return (
+                              <div key={i} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
+                                <div style={{ fontSize: "9px", color: "rgb(var(--ink-faint))", fontFamily: "var(--font-mono)" }}>
+                                  ${(val / 1000).toFixed(0)}k
+                                </div>
+                                <div style={{ width: "100%", height: `${pct}%`, background: isLast ? "rgb(var(--brand))" : "rgb(var(--brand) / 0.35)", borderRadius: "3px 3px 0 0", transition: "height 0.4s ease" }} />
                               </div>
-                              <div style={{ width: "100%", height: `${pct}%`, background: isLast ? "rgb(var(--brand))" : "rgb(var(--brand) / 0.35)", borderRadius: "3px 3px 0 0", transition: "height 0.4s ease" }} />
-                            </div>
-                          );
-                        })}
-                      </div>
-                      <div style={{ display: "flex", justifyContent: "space-between", marginTop: "8px", fontSize: "9px", color: "rgb(var(--ink-faint))", fontFamily: "var(--font-mono)" }}>
-                        {["Aug 10", "Aug 11", "Aug 12", "Aug 13", "Aug 14", "Aug 15", "Now"].map((d) => (
-                          <span key={d}>{d}</span>
-                        ))}
+                            );
+                          })}
+                        </div>
+                        <div style={{ marginLeft: "28px", display: "flex", justifyContent: "space-between", marginTop: "6px", fontSize: "9px", color: "rgb(var(--ink-faint))", fontFamily: "var(--font-mono)" }}>
+                          {["Aug 10", "Aug 11", "Aug 12", "Aug 13", "Aug 14", "Aug 15", "Now"].map((d) => (
+                            <span key={d}>{d}</span>
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>
