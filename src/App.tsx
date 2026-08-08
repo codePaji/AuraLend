@@ -1791,6 +1791,9 @@ export default function App() {
                             <span style={{ color: row.status === "ok" ? "rgb(var(--long))" : "rgb(var(--brand))", fontWeight: 500 }}>{row.value}</span>
                           </div>
                         ))}
+                        <div style={{ paddingTop: "10px", fontSize: "10px", color: "rgb(var(--ink-faint))", fontFamily: "var(--font-mono)" }}>
+                          Last synced: {new Date().toLocaleTimeString()} · auto-refreshes every 30s
+                        </div>
                       </div>
                     </div>
                   </div>
