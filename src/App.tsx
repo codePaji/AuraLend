@@ -1768,6 +1768,11 @@ export default function App() {
                           </div>
                         </div>
                       ))}
+                      {/* Summary total */}
+                      <div style={{ borderTop: "1px solid rgb(var(--hairline))", paddingTop: "12px", display: "flex", justifyContent: "space-between", fontSize: "13px" }}>
+                        <span style={{ color: "rgb(var(--ink))", fontWeight: 500 }}>Total Net APY (at {leverage.toFixed(1)}x)</span>
+                        <span className="tnum" style={{ color: "rgb(var(--long))", fontWeight: 700 }}>+{(supplyApy + 3.0 * leverage - borrowApy * 0.3).toFixed(2)}%</span>
+                      </div>
                     </div>
 
                     <div className="card-premium sheen" style={{ gridColumn: "span 6", padding: "24px" }}>
