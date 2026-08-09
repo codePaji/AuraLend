@@ -411,6 +411,9 @@ export default function App() {
   const [tokenBPrice, setTokenBPrice] = useState(1.00); // Mocks the paired asset price in USD
   const [simulatedPriceChange, setSimulatedPriceChange] = useState(0);
 
+  // Analytics auto-refresh tick counter
+  const [analyticsRefreshKey, setAnalyticsRefreshKey] = useState(0);
+
   // Event Logs Feed
   const [events, setEvents] = useState<EventLog[]>([
     {
@@ -453,6 +456,7 @@ export default function App() {
     if (activeTab !== "analytics") return;
     const interval = setInterval(() => {
       fetchMarketMetrics();
+      setAnalyticsRefreshKey((k) => k + 1);
     }, 30_000);
     return () => clearInterval(interval);
   }, [activeTab]);
