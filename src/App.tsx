@@ -596,23 +596,23 @@ export default function App() {
         ...clientOptions,
         contractId: LENDING_POOL_ID,
       });
-      const tvlBig = (await poolClient.get_total_liquidity()).result;
-      const borrowBig = (await poolClient.get_total_borrowed()).result;
-      const borrowRateBig = (await poolClient.get_borrow_rate()).result;
 
-      const tvlNum = Number(tvlBig) / 10_000_000;
-      const borrowNum = Number(borrowBig) / 10_000_000;
-      const bRate = Number(borrowRateBig) / 100; // e.g. 850 -> 8.5%
+      // Single batch call instead of 3 separate RPC requests
+      const stats = (await poolClient.get_pool_stats()).result;
+
+      const tvlNum = Number(stats.total_liquidity) / 10_000_000;
+      const borrowNum = Number(stats.total_borrowed) / 10_000_000;
+      const bRate = Number(stats.borrow_rate) / 100; // e.g. 850 -> 8.5%
+      // utilization_rate is scaled to 7 decimals (e.g. 4_000_000 = 40%)
+      const util = Number(stats.utilization_rate) / 100_000;
 
       setPoolTvl(tvlNum || 125000);
       setPoolBorrowed(borrowNum || 45000);
-      
-      const util = tvlNum > 0 ? (borrowNum / tvlNum) * 100 : 36.0;
-      setUtilizationRate(util);
+      setUtilizationRate(util || 36.0);
       setBorrowApy(bRate || 8.5);
       setSupplyApy(util > 0 ? bRate * (util / 100) * 0.9 : 4.25);
     } catch (err) {
-      console.error("Failed to fetch pool metrics:", err);
+      console.warn("Pool metrics unavailable, using fallback values:", err);
     }
   };
 
