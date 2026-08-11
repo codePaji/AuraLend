@@ -1240,8 +1240,11 @@ export default function App() {
                     {/* Utilization Rate Meter */}
                     <div style={{ marginBottom: "24px" }}>
                       <div style={{ display: "flex", justifyItems: "center", justifyContent: "space-between", fontSize: "12px", color: "rgb(var(--ink-muted))", marginBottom: "6px" }}>
-                        <span>Pool Utilization Rate</span>
-                        <span className="tnum">{utilizationRate.toFixed(1)}%</span>
+                        <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                          <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: "rgb(var(--long))", display: "inline-block", boxShadow: "0 0 6px rgb(var(--long))" }} />
+                          On-Chain Utilization Rate
+                        </span>
+                        <span className="tnum" style={{ fontWeight: 600 }}>{utilizationRate.toFixed(1)}%</span>
                       </div>
                       <div style={{ height: "6px", width: "100%", background: "rgb(var(--hairline))", borderRadius: "3px", overflow: "hidden" }}>
                         <div style={{ height: "100%", width: `${utilizationRate}%`, background: "rgb(var(--brand))" }} />
