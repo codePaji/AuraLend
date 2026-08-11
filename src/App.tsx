@@ -883,42 +883,42 @@ export default function App() {
               <button 
                 onClick={() => setActiveTab("farm")} 
                 className="font-display" 
-                style={{ background: "transparent", border: "none", fontSize: "13.5px", cursor: "pointer", color: activeTab === "farm" ? "rgb(var(--brand))" : "rgb(var(--ink-muted))", fontWeight: activeTab === "farm" ? 600 : 400, padding: 0 }}
+                style={{ background: "transparent", border: "none", fontSize: "13.5px", cursor: "pointer", color: activeTab === "farm" ? "rgb(var(--brand))" : "rgb(var(--ink-muted))", fontWeight: activeTab === "farm" ? 600 : 400, padding: "8px 0", borderBottom: activeTab === "farm" ? "2px solid rgb(var(--brand))" : "2px solid transparent", transition: "all 0.2s ease" }}
               >
                 Trade
               </button>
               <button 
                 onClick={() => setActiveTab("portfolio")} 
                 className="font-display" 
-                style={{ background: "transparent", border: "none", fontSize: "13.5px", cursor: "pointer", color: activeTab === "portfolio" ? "rgb(var(--brand))" : "rgb(var(--ink-muted))", fontWeight: activeTab === "portfolio" ? 600 : 400, padding: 0 }}
+                style={{ background: "transparent", border: "none", fontSize: "13.5px", cursor: "pointer", color: activeTab === "portfolio" ? "rgb(var(--brand))" : "rgb(var(--ink-muted))", fontWeight: activeTab === "portfolio" ? 600 : 400, padding: "8px 0", borderBottom: activeTab === "portfolio" ? "2px solid rgb(var(--brand))" : "2px solid transparent", transition: "all 0.2s ease" }}
               >
                 Portfolio
               </button>
               <button 
                 onClick={() => setActiveTab("markets")} 
                 className="font-display" 
-                style={{ background: "transparent", border: "none", fontSize: "13.5px", cursor: "pointer", color: activeTab === "markets" ? "rgb(var(--brand))" : "rgb(var(--ink-muted))", fontWeight: activeTab === "markets" ? 600 : 400, padding: 0 }}
+                style={{ background: "transparent", border: "none", fontSize: "13.5px", cursor: "pointer", color: activeTab === "markets" ? "rgb(var(--brand))" : "rgb(var(--ink-muted))", fontWeight: activeTab === "markets" ? 600 : 400, padding: "8px 0", borderBottom: activeTab === "markets" ? "2px solid rgb(var(--brand))" : "2px solid transparent", transition: "all 0.2s ease" }}
               >
                 Vault
               </button>
               <button 
                 onClick={() => setActiveTab("activity")} 
                 className="font-display" 
-                style={{ background: "transparent", border: "none", fontSize: "13.5px", cursor: "pointer", color: activeTab === "activity" ? "rgb(var(--brand))" : "rgb(var(--ink-muted))", fontWeight: activeTab === "activity" ? 600 : 400, padding: 0 }}
+                style={{ background: "transparent", border: "none", fontSize: "13.5px", cursor: "pointer", color: activeTab === "activity" ? "rgb(var(--brand))" : "rgb(var(--ink-muted))", fontWeight: activeTab === "activity" ? 600 : 400, padding: "8px 0", borderBottom: activeTab === "activity" ? "2px solid rgb(var(--brand))" : "2px solid transparent", transition: "all 0.2s ease" }}
               >
                 Activity
               </button>
               <button 
                 onClick={() => setActiveTab("analytics")} 
                 className="font-display" 
-                style={{ background: "transparent", border: "none", fontSize: "13.5px", cursor: "pointer", color: activeTab === "analytics" ? "rgb(var(--brand))" : "rgb(var(--ink-muted))", fontWeight: activeTab === "analytics" ? 600 : 400, padding: 0 }}
+                style={{ background: "transparent", border: "none", fontSize: "13.5px", cursor: "pointer", color: activeTab === "analytics" ? "rgb(var(--brand))" : "rgb(var(--ink-muted))", fontWeight: activeTab === "analytics" ? 600 : 400, padding: "8px 0", borderBottom: activeTab === "analytics" ? "2px solid rgb(var(--brand))" : "2px solid transparent", transition: "all 0.2s ease" }}
               >
                 Analytics
               </button>
               <button 
                 onClick={() => setActiveTab("sandbox")} 
                 className="font-display" 
-                style={{ background: "transparent", border: "none", fontSize: "13.5px", cursor: "pointer", color: activeTab === "sandbox" ? "rgb(var(--brand))" : "rgb(var(--ink-muted))", fontWeight: activeTab === "sandbox" ? 600 : 400, padding: 0 }}
+                style={{ background: "transparent", border: "none", fontSize: "13.5px", cursor: "pointer", color: activeTab === "sandbox" ? "rgb(var(--brand))" : "rgb(var(--ink-muted))", fontWeight: activeTab === "sandbox" ? 600 : 400, padding: "8px 0", borderBottom: activeTab === "sandbox" ? "2px solid rgb(var(--brand))" : "2px solid transparent", transition: "all 0.2s ease" }}
               >
                 Settings
               </button>
