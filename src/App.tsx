@@ -51,6 +51,7 @@ interface EventLog {
   amount: string;
   details: string;
   timestamp: string;
+  txHash?: string;
 }
 
 const AuraLogo = ({ size = 22 }: { size?: number }) => (
@@ -422,7 +423,8 @@ export default function App() {
       user: "GAJEP...CTMB",
       amount: "15,000 USDC",
       details: "Deposited liquidity into USDC Vault",
-      timestamp: "5 mins ago"
+      timestamp: "5 mins ago",
+      txHash: "7a8f...9d2e"
     },
     {
       id: "2",
@@ -430,7 +432,8 @@ export default function App() {
       user: "GDF83...Z34K",
       amount: "5,000 USDC",
       details: "Opened 3x Leverage Farming Position (USDC/XLM)",
-      timestamp: "12 mins ago"
+      timestamp: "12 mins ago",
+      txHash: "3b2c...1a4f"
     }
   ]);
 
@@ -852,7 +855,8 @@ export default function App() {
       user: userAddress.substring(0, 5) + "..." + userAddress.substring(userAddress.length - 4),
       amount,
       details,
-      timestamp: "Just now"
+      timestamp: "Just now",
+      txHash: Math.random().toString(16).substring(2, 10) + "..." + Math.random().toString(16).substring(2, 6)
     };
     setEvents((prev) => [newEvent, ...prev]);
   };
@@ -1672,8 +1676,18 @@ export default function App() {
                               <span className="tnum" style={{ color: "rgb(var(--ink-faint))", fontSize: "11px" }}>{e.timestamp}</span>
                             </div>
                             <div style={{ color: "rgb(var(--ink))" }}><strong>{e.amount}</strong> - {e.details}</div>
-                            <div style={{ color: "rgb(var(--ink-muted))", fontSize: "11px", fontFamily: "var(--font-mono)", textAlign: "right" }}>
-                              Actor: {e.user}
+                            <div style={{ display: "flex", justifyContent: "space-between", color: "rgb(var(--ink-muted))", fontSize: "11px", fontFamily: "var(--font-mono)" }}>
+                              <span>Actor: {e.user}</span>
+                              {e.txHash && (
+                                <a 
+                                  href={`https://stellar.expert/explorer/testnet/tx/${e.txHash.replace("...", "")}`} 
+                                  target="_blank" 
+                                  rel="noreferrer"
+                                  style={{ color: "rgb(var(--brand))", textDecoration: "none" }}
+                                >
+                                  Explorer ↗
+                                </a>
+                              )}
                             </div>
                           </div>
                         ))}
