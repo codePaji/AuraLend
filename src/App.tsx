@@ -5,8 +5,6 @@ import {
   Wallet, 
   LineChart, 
   ArrowRight, 
-  Activity, 
-  Settings, 
   Plus, 
   Minus,
   RefreshCw
@@ -16,7 +14,6 @@ import { RiskBadge } from "./components/RiskBadge";
 import { UtilizationDonut } from "./components/UtilizationDonut";
 import gsap from "gsap";
 import { isConnected, getAddress, signTransaction, requestAccess } from "@stellar/freighter-api";
-import { Transaction } from "@stellar/stellar-sdk";
 import { rpc, horizon } from "./lib/stellar";
 import { PriceChart } from "./components/PriceChart";
 import { AreaChart } from "./components/AreaChart";
@@ -24,12 +21,10 @@ import { AreaChart } from "./components/AreaChart";
 // Generated Contract Clients (Direct TS files imports)
 import { Client as USDCClient } from "./contracts/mock-usdc/src/index";
 import { Client as LendingPoolClient } from "./contracts/lending-pool/src/index";
-import { Client as MockAmmClient } from "./contracts/mock-amm/src/index";
 import { Client as LeverageEngineClient } from "./contracts/leverage-engine/src/index";
 
 const USDC_ID = "CA5CBZU5WNPXCWMHFRZ3QDLXGE3O77M2BJ3A6HC3NCWZRMKVEZWITSGJ";
 const LENDING_POOL_ID = "CBW7MYEY6Q6LUDDJQGVYQKOAQYHC2NELIUYPGABD4C5W7N2JPXH7HT4H";
-const MOCK_AMM_ID = "CDL4XOK44A7EXCMPXRVFC3HEBZB62L7ACZPPC7UMGUCL32VERWVQED24";
 const LEVERAGE_ENGINE_ID = "CBB2FB5SOLDM6EF6B2S23DZTXJ3VTALLTV2T6XMUUXPCAXKRJMJUMNSI";
 
 const clientOptions = {
