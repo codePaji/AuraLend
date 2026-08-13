@@ -148,6 +148,8 @@ Manages supplier liquidity reserves, lending balances, interest rates, and utili
 | `get_total_liquidity()` | Public | Query total USDC liquidity deposited in the pool |
 | `get_total_borrowed()` | Public | Query total USDC active borrow debt |
 | `get_borrow_rate()` | Public | Query utilization-driven interest rate parameters |
+| `get_utilization_rate()` | Public | Query current pool capital utilization scaled to 7 decimals |
+| `get_pool_stats()` | Public | **Batch Getter:** Query all global pool metrics in a single round-trip |
 
 ### Leverage Engine Contract
 
