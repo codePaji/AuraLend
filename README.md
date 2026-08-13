@@ -113,12 +113,12 @@ To meet Level 4 validation requirements, users can perform onboarding actions on
 AuraLend utilizes a dual-contract architecture where the Leverage Engine communicates atomically with the Lending Pool and the USDC Token Contract via Inter-Contract Calls (ICC).
 
 ```
-┌─────────────────────────────────────────────────────────────────────┐
-│                          React / Vite Frontend                      │
-│                                                                     │
-│  Lending Vaults │ Leveraged Farming │ Portfolio │ Live Telemetry    │
-│                        Freighter Wallet SDK                         │
-└──────────────────┬─────────────────────────────┬───────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                              React / Vite Frontend                          │
+│                                                                             │
+│  Lending Vaults │ Leveraged Farming │ Portfolio │ Analytics & Telemetry │
+│                              Freighter Wallet SDK                           │
+└──────────────────┬─────────────────────────────┬───────────────────────────┘
                    │ TypeScript Contract Clients  │
           ┌────────▼─────────┐         ┌─────────▼────────┐
           │ Leverage Engine  │──ICC──→ │   Lending Pool   │
@@ -175,7 +175,8 @@ We implemented several production-grade improvements in Level 4:
 
 ### Frontend Enhancements
 *   **Memory Leak Fixes:** Ensured all WebGL renders, window resize event listeners, and polling cycles clear correctly on component unmount.
-*   **Live Status telemetry:** Built a dedicated Stellar RPC Monitor in the Activity tab to track node ping, connection status, and transaction histories in real time.
+*   **Analytics Dashboard:** Built a comprehensive analytics tab with a dynamic `UtilizationDonut`, TVL sparklines, and APY decomposition bars pulling real-time, on-chain state via batch getters (`get_pool_stats`).
+*   **Live Status telemetry:** Built a dedicated Stellar RPC Monitor in the Activity tab to track node ping, connection status, and transaction histories in real time with Stellar Expert explorer links.
 *   **Mobile Responsiveness:** Refactored layout frameworks (`hero-grid`, `features-grid`, `stats-grid`) to stack gracefully on narrow mobile device viewports (down to 390px).
 
 ---
