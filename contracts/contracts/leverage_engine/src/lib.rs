@@ -307,7 +307,13 @@ impl LeverageEngineContract {
                     1000
                 } else {
                     let raw = (p.lp_shares * 80) / p.borrow_amount;
-                    raw.try_into().unwrap_or(u32::MAX)
+                    if raw <= 0 {
+                        0
+                    } else if raw > u32::MAX as i128 {
+                        u32::MAX
+                    } else {
+                        raw as u32
+                    }
                 }
             }
         }
