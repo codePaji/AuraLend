@@ -8,8 +8,8 @@ members = [
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-authors = ["AuraLend Protocol"]
-repository = "https://github.com/auralend/auralend"
+authors = ["Arindam Das <arindamdascode@gmail.com>", "codePaji"]
+repository = "https://github.com/codePaji/AuraLend"
 rust-version = "1.85"
 
 [workspace.dependencies]
