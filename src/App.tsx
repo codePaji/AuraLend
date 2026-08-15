@@ -492,7 +492,7 @@ export default function App() {
         showFeedback("info", "Please install or unlock your Freighter browser extension.");
       }
     } catch (err: any) {
-      console.error("Freighter connection failed:", err);
+      setWalletConnected(false);
       showFeedback("error", "Freighter connection failed. Please ensure the extension is installed and unlocked.");
     }
   };
@@ -524,7 +524,6 @@ export default function App() {
         setXlmBalance(parseFloat(nativeBalance.balance).toLocaleString("en-US", { maximumFractionDigits: 4 }));
       }
     } catch (xlmErr: any) {
-      console.warn("Could not fetch XLM balance from Horizon (account might not be active on ledger yet):", xlmErr);
       setXlmBalance("0");
     }
 
@@ -537,8 +536,6 @@ export default function App() {
       const balanceBig = (await usdcClient.balance({ account: userAddress })).result;
       setUsdcBalance((Number(balanceBig) / 10_000_000).toFixed(2));
     } catch (usdcErr: any) {
-      console.error("Error fetching USDC balance:", usdcErr);
-      setDebugError((prev) => prev + `\nUSDC Balance Error: ${usdcErr.message || usdcErr.toString()}`);
       setUsdcBalance("0.00");
     }
 
@@ -551,8 +548,6 @@ export default function App() {
       const poolBalanceBig = (await poolClient.get_balance({ user: userAddress })).result;
       setPoolCollateral((Number(poolBalanceBig) / 10_000_000).toFixed(2));
     } catch (poolErr: any) {
-      console.error("Error fetching pool balance:", poolErr);
-      setDebugError((prev) => prev + `\nPool Collateral Error: ${poolErr.message || poolErr.toString()}`);
       setPoolCollateral("0.00");
     }
 
@@ -582,8 +577,6 @@ export default function App() {
         setActivePosition(null);
       }
     } catch (levErr: any) {
-      console.error("Error fetching leverage position:", levErr);
-      setDebugError((prev) => prev + `\nLeverage Position Error: ${levErr.message || levErr.toString()}`);
       setActivePosition(null);
     }
   };
