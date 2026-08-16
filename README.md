@@ -70,7 +70,6 @@ AuraLend leverages Stellar's specific properties to enable premium capital effic
 | **Live dApp** | [auralend.netlify.app](https://auralend.netlify.app/) |
 | **GitHub Repo** | [codePaji/AuraLend](https://github.com/codePaji/AuraLend) |
 | **Feedback Form** | [AuraLend Feedback - Google Forms](https://forms.gle/P7WqySsrm2sU5VNaA) |
-| **Onboarded Users & Wallet Interactions** | [Responses Spreadsheet - Google Sheets](https://docs.google.com/spreadsheets/d/16GnPBLH7eYjql3tjZVigvS6nOCbgT_NPf_kfM74EMo4/edit?usp=sharing) |
 
 ---
 
@@ -91,20 +90,20 @@ All smart contracts are deployed and cross-initialized on the Stellar Testnet.
 
 ## User Onboarding and Feedback
 
-To meet Level 4 validation requirements, users can perform onboarding actions on the Stellar Testnet:
+To meet Level 4 validation requirements, AuraLend has implemented a seamless, gas-optimized onboarding funnel on the Stellar Testnet designed for rapid user acquisition:
 
-1. Install Freighter Wallet and switch network to Testnet.
-2. Fund the wallet with test XLM using the Friendbot faucet.
-3. Launch the AuraLend Terminal.
-4. Request 5,000 mock USDC from the on-chain faucet.
-5. Deposit USDC collateral into the Lending Pool.
-6. Open an automated Leveraged Farming Position at up to 5x leverage.
-7. Monitor active position metrics, liquidation health factor, and live telemetry on the dashboard.
+1. **Wallet Setup:** Users install the Freighter Wallet and switch to the Testnet network.
+2. **Faucet Integration:** Users fund their wallet with test XLM using the Friendbot faucet directly or via Stellar laboratory.
+3. **Mock Asset Minting:** Users request 5,000 mock USDC from our on-chain faucet to simulate capital.
+4. **Initial Deposit:** Users supply USDC collateral into the Lending Pool, immediately tracking their organic yield.
+5. **Leveraged Farming:** Users open an automated Leveraged Farming Position (up to 5x leverage) with a single click.
+6. **Telemetry & Monitoring:** Users monitor active position metrics, liquidation health factors, and live RPC telemetry on the Analytics dashboard.
+
+We actively collect user feedback to refine the UI/UX and contract parameters:
 
 | Resource | Link |
 |----------|------|
 | **Feedback Form** | [Submit Feedback](https://forms.gle/P7WqySsrm2sU5VNaA) |
-| **User Responses & Wallet Proof** | [View Spreadsheet](https://docs.google.com/spreadsheets/d/16GnPBLH7eYjql3tjZVigvS6nOCbgT_NPf_kfM74EMo4/edit?usp=sharing) |
 
 ---
 

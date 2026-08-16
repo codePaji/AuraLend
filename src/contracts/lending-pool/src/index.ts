@@ -42,9 +42,12 @@ export const Errors = {
 
 export type DataKey = {tag: "Admin", values: void} | {tag: "Token", values: void} | {tag: "Balance", values: readonly [string]} | {tag: "TotalLiquidity", values: void} | {tag: "TotalBorrowed", values: void} | {tag: "LeverageEngine", values: void};
 
-
-
-
+export interface PoolStats {
+  total_liquidity: i128;
+  total_borrowed: i128;
+  borrow_rate: u32;
+  utilization_rate: u32;
+}
 
 export interface Client {
   /**
@@ -86,6 +89,16 @@ export interface Client {
    * Construct and simulate a get_total_liquidity transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
    */
   get_total_liquidity: (options?: MethodOptions) => Promise<AssembledTransaction<i128>>
+
+  /**
+   * Construct and simulate a get_utilization_rate transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   */
+  get_utilization_rate: (options?: MethodOptions) => Promise<AssembledTransaction<u32>>
+
+  /**
+   * Construct and simulate a get_pool_stats transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
+   */
+  get_pool_stats: (options?: MethodOptions) => Promise<AssembledTransaction<PoolStats>>
 
   /**
    * Construct and simulate a set_leverage_engine transaction. Returns an `AssembledTransaction` object which will have a `result` field containing the result of the simulation. If this transaction changes contract state, you will need to call `signAndSend()` on the returned object.
@@ -140,6 +153,8 @@ export class Client extends ContractClient {
         get_borrow_rate: this.txFromJSON<i128>,
         get_total_borrowed: this.txFromJSON<i128>,
         get_total_liquidity: this.txFromJSON<i128>,
+        get_utilization_rate: this.txFromJSON<u32>,
+        get_pool_stats: this.txFromJSON<PoolStats>,
         set_leverage_engine: this.txFromJSON<Result<void>>
   }
 }
