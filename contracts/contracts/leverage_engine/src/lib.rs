@@ -39,6 +39,10 @@ pub enum Error {
 // Minimum collateral required to open a position (1 USDC = 10_000_000 raw units with 7 decimals)
 pub const MIN_COLLATERAL: i128 = 10_000_000;
 
+// TTL Limits: ~1 day minimum threshold, ~30 days extension target
+const MIN_TTL: u32 = 17280;
+const EXTEND_TO: u32 = 518400;
+
 #[contractevent]
 pub struct PositionOpened {
     pub user: Address,
@@ -104,7 +108,7 @@ impl LeverageEngineContract {
     ) -> Result<i128, Error> {
         user.require_auth();
 
-        if collateral <= 0 {
+        if collateral < MIN_COLLATERAL {
             return Err(Error::InsufficientCollateral);
         }
 
@@ -158,6 +162,7 @@ impl LeverageEngineContract {
             lp_shares,
         };
         env.storage().persistent().set(&user_key, &position);
+        env.storage().persistent().extend_ttl(&user_key, MIN_TTL, EXTEND_TO);
 
         PositionOpened {
             user,

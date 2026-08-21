@@ -56,30 +56,30 @@ fn test_integration_flow() {
     pool_client.set_leverage_engine(&engine_id);
 
     // 6. Pre-seed users with balances
-    // Lender deposits 5000 USDC into Lending Pool
-    token_a_admin.mint(&lender, &5000);
-    token_a_admin.mint(&amm_id, &5000); // AMM pool liquidity seeds
-    token_b_admin.mint(&amm_id, &5000);
+    // Lender deposits 5000_000_000 USDC into Lending Pool
+    token_a_admin.mint(&lender, &5_000_000_000);
+    token_a_admin.mint(&amm_id, &5_000_000_000); // AMM pool liquidity seeds
+    token_b_admin.mint(&amm_id, &5_000_000_000);
 
-    pool_client.deposit(&lender, &5000);
-    assert_eq!(pool_client.get_total_liquidity(), 5000);
+    pool_client.deposit(&lender, &5_000_000_000);
+    assert_eq!(pool_client.get_total_liquidity(), 5_000_000_000);
     assert_eq!(pool_client.get_borrow_rate(), 200_000); // 2% dynamic interest rate initially
 
-    // User gets 200 USDC collateral
-    token_a_admin.mint(&user, &200);
+    // User gets 200_000_000 USDC collateral
+    token_a_admin.mint(&user, &200_000_000);
 
-    // 7. Open leveraged position: User deposits 100 USDC with 3x leverage (300 USDC position size)
-    // Collateral = 100 USDC, Borrow = 200 USDC
-    let collateral = 100i128;
+    // 7. Open leveraged position: User deposits 100_000_000 USDC with 3x leverage (300 USDC position size)
+    // Collateral = 100_000_000 USDC, Borrow = 200_000_000 USDC
+    let collateral = 100_000_000i128;
     let leverage = 300u32; // 3x leverage
 
     let lp_shares = engine_client.open_position(&user, &collateral, &leverage);
-    assert_eq!(lp_shares, 300); // LP Shares = USDC deposit (150) + XLM deposit (150)
+    assert_eq!(lp_shares, 300_000_000); // LP Shares = USDC deposit (150) + XLM deposit (150)
 
     // Verify balances after leveraged open
-    assert_eq!(token_a_client.balance(&user), 100); // User used 100 USDC
-    assert_eq!(pool_client.get_total_borrowed(), 200); // 200 USDC borrowed from pool
-    assert_eq!(pool_client.get_total_liquidity(), 4800); // Liquidity dropped from 5000 to 4800
+    assert_eq!(token_a_client.balance(&user), 100_000_000); // User used 100 USDC
+    assert_eq!(pool_client.get_total_borrowed(), 200_000_000); // 200 USDC borrowed from pool
+    assert_eq!(pool_client.get_total_liquidity(), 4_800_000_000); // Liquidity dropped from 5000 to 4800
     
     // Dynamic rate utilization checks: rate should have scaled up
     // U = 200 / 5000 = 4%
@@ -88,9 +88,9 @@ fn test_integration_flow() {
 
     // Check position mapping details
     let position = engine_client.get_position(&user).unwrap();
-    assert_eq!(position.collateral, 100);
-    assert_eq!(position.borrow_amount, 200);
-    assert_eq!(position.lp_shares, 300);
+    assert_eq!(position.collateral, 100_000_000);
+    assert_eq!(position.borrow_amount, 200_000_000);
+    assert_eq!(position.lp_shares, 300_000_000);
 
     let health = engine_client.get_health_factor(&user);
     // Health factor: (lp_shares * 80) / borrow_amount = (300 * 80) / 200 = 120 (Healthy >= 100)
@@ -98,12 +98,12 @@ fn test_integration_flow() {
 
     // 8. Close Position: close and settle user position
     let payout = engine_client.close_position(&user);
-    // Unwound LP shares (300) -> withdrawn 150 USDC + 150 XLM
-    // Swapped 150 XLM back -> +150 USDC. Total USDC = 300 USDC.
-    // Repay debt: principal (200) + 5% interest (10) = 210 USDC.
-    // Payout to user = 300 - 210 = 90 USDC.
-    assert_eq!(payout, 90);
-    assert_eq!(token_a_client.balance(&user), 190); // Initial 100 + 90 payout = 190 USDC.
+    // Unwound LP shares (300M) -> withdrawn 150M USDC + 150M XLM
+    // Swapped 150M XLM back -> +150M USDC. Total USDC = 300M USDC.
+    // Repay debt: principal (200M) + 5% interest (10M) = 210M USDC.
+    // Payout to user = 300M - 210M = 90M USDC.
+    assert_eq!(payout, 90_000_000);
+    assert_eq!(token_a_client.balance(&user), 190_000_000); // Initial 100 + 90 payout = 190 USDC.
     assert!(engine_client.get_position(&user).is_none());
 }
 
@@ -147,16 +147,16 @@ fn test_liquidation_flow() {
     pool_client.set_leverage_engine(&engine_id);
 
     // Seed balances
-    token_a_admin.mint(&lender, &5000);
-    token_a_admin.mint(&amm_id, &5000);
-    token_b_admin.mint(&amm_id, &5000);
-    pool_client.deposit(&lender, &5000);
+    token_a_admin.mint(&lender, &5_000_000_000);
+    token_a_admin.mint(&amm_id, &5_000_000_000);
+    token_b_admin.mint(&amm_id, &5_000_000_000);
+    pool_client.deposit(&lender, &5_000_000_000);
 
-    token_a_admin.mint(&user, &100);
+    token_a_admin.mint(&user, &100_000_000);
 
     // Open position: 100 USDC collateral, 4x leverage (400 USDC position size)
-    // Collateral = 100 USDC, Borrow = 300 USDC, LP shares = 400
-    engine_client.open_position(&user, &100, &400);
+    // Collateral = 100M USDC, Borrow = 300M USDC, LP shares = 400M
+    engine_client.open_position(&user, &100_000_000, &400);
 
     // Check health: (400 * 80) / 300 = 106. Healthy (since 106 >= 100).
     assert_eq!(engine_client.get_health_factor(&user), 106);
@@ -166,12 +166,12 @@ fn test_liquidation_flow() {
     assert!(liq_err.is_err());
 
     // Open a high leverage position (5.5x) which is liquidatable instantly:
-    // Collateral = 100 USDC, leverage = 550.
-    // Borrow = 450 USDC, lp_shares = 550.
+    // Collateral = 100M USDC, leverage = 550.
+    // Borrow = 450M USDC, lp_shares = 550M.
     // Health factor = (550 * 80) / 450 = 97 (liquidatable).
     let user2 = Address::generate(&env);
-    token_a_admin.mint(&user2, &100);
-    engine_client.open_position(&user2, &100, &550);
+    token_a_admin.mint(&user2, &100_000_000);
+    engine_client.open_position(&user2, &100_000_000, &550);
 
     assert_eq!(engine_client.get_health_factor(&user2), 97);
 
@@ -182,14 +182,11 @@ fn test_liquidation_flow() {
     assert!(engine_client.get_position(&user2).is_none());
 
     // Payout verification:
-    // Unwound LP shares (550) -> withdrawn 275 USDC + 275 XLM
-    // Swapped 275 XLM back -> +275 USDC. Total USDC = 550.
-    // Repay debt: principal (450) + 5% interest (22) = 472 USDC.
-    // Remaining margin = 550 - 472 = 78 USDC.
-    // Liquidator reward = 78 / 10 = 7 USDC.
-    // User refund = 78 - 7 = 71 USDC.
-    assert_eq!(token_a_client.balance(&liquidator), 7);
-    assert_eq!(token_a_client.balance(&user2), 71);
+    // Remaining margin = 77.5M USDC.
+    // Liquidator reward = 77.5M / 10 = 7_750_000 USDC.
+    // User refund = 77.5M - 7.75M = 69_750_000 USDC.
+    assert_eq!(token_a_client.balance(&liquidator), 7_750_000);
+    assert_eq!(token_a_client.balance(&user2), 69_750_000);
 }
 
 #[test]
@@ -217,17 +214,17 @@ fn test_health_factor_boundary() {
     let engine_client = LeverageEngineContractClient::new(&env, &engine_id);
     pool_client.set_leverage_engine(&engine_id);
 
-    token_a_admin.mint(&lender, &5000);
-    token_a_admin.mint(&amm_id, &5000);
-    token_b_admin.mint(&amm_id, &5000);
-    pool_client.deposit(&lender, &5000);
+    token_a_admin.mint(&lender, &5_000_000_000);
+    token_a_admin.mint(&amm_id, &5_000_000_000);
+    token_b_admin.mint(&amm_id, &5_000_000_000);
+    pool_client.deposit(&lender, &5_000_000_000);
 
     // No position: health factor defaults to max (1000)
     assert_eq!(engine_client.get_health_factor(&user), 1000);
 
     // Open position with 3x leverage
-    token_a_admin.mint(&user, &200);
-    engine_client.open_position(&user, &100, &300u32);
+    token_a_admin.mint(&user, &200_000_000);
+    engine_client.open_position(&user, &100_000_000, &300u32);
     // Health: (300 * 80) / 200 = 120
     assert_eq!(engine_client.get_health_factor(&user), 120);
 
