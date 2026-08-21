@@ -81,10 +81,10 @@ All smart contracts are deployed and cross-initialized on the Stellar Testnet.
 
 | Contract | Address |
 |----------|---------|
-| **Mock USDC (SAC)** | `CA5CBZU5WNPXCWMHFRZ3QDLXGE3O77M2BJ3A6HC3NCWZRMKVEZWITSGJ` |
-| **Lending Pool Contract** | `CBW7MYEY6Q6LUDDJQGVYQKOAQYHC2NELIUYPGABD4C5W7N2JPXH7HT4H` |
-| **Leverage Engine Contract** | `CBB2FB5SOLDM6EF6B2S23DZTXJ3VTALLTV2T6XMUUXPCAXKRJMJUMNSI` |
-| **Mock AMM Contract** | `CDL4XOK44A7EXCMPXRVFC3HEBZB62L7ACZPPC7UMGUCL32VERWVQED24` |
+| **Mock USDC (SAC)** | `CDHJ5THTOU5AC3GNJCGESNP4TV27OWZ537AVXQ4KFN4O72WWCWOKRU2P` |
+| **Lending Pool Contract** | `CD2TXSD3UBZZPAEJ2COYIBXZ7PXTW7F347ESRHITA2SHCJBAOPGLX2HN` |
+| **Leverage Engine Contract** | `CC7D5XN2DDSIBPI4BJ3Y6HZCFT2XYSTTCTTYYGU4USQRUUL6QASMGOKV` |
+| **Mock AMM Contract** | `CBUFHZT64PXRG2RLOSPCRAWFCWNLNVCK4WE63VY6JVFO6PCMWE7GKENX` |
 
 ---
 
@@ -166,12 +166,14 @@ Controls leverage position lifecycles, collateral ratios, debt records, and liqu
 
 ## Production Hardening (Level 4)
 
-We implemented several production-grade improvements in Level 4:
+AuraLend has been heavily hardened for production deployment to meet all Level 4 validation requirements, focusing on robust security, accurate accounting, and edge-case resilience.
 
-### Smart Contract Hardening
+### Smart Contract Security & Architecture
+*   **ERC4626 Share-Based Yield Tracking:** Refactored the Lending Pool from simple balance tracking to a robust Share/Asset model, preventing interest lockup vulnerabilities and accurately distributing yield dynamically to all suppliers.
+*   **Bad Debt Protection & Graceful Liquidations:** Rebuilt `close_position` and `liquidate` routines in the Leverage Engine to safely handle underwater positions where collateral value drops below borrow debt, writing off bad debt gracefully without triggering state-halting panics.
 *   **Initialization Guard:** Prevented double-initialization of contracts after deployment.
 *   **Access Control Limits:** Restricted `borrow()` and `repay()` actions on the Lending Pool solely to the registered Leverage Engine.
-*   **Data Expiry Prevention:** Integrated instance TTL extensions (`extend_ttl`) on every state-changing transaction to keep contract data active.
+*   **Data Expiry Prevention:** Integrated instance TTL extensions (`extend_ttl`) on every state-changing transaction to keep contract data active, and enforced strict minimum collateral bounds.
 *   **Structured Errors:** Replaced raw `panic!` strings with a typed `#[contracterror]` enum.
 
 ### Frontend Enhancements
