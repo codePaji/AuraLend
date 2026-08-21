@@ -16,6 +16,7 @@ pub enum DataKey {
     TotalLiquidity, // Cash reserve in contract
     TotalBorrowed,  // Debt outstanding
     LeverageEngine, // Address of the leverage engine
+    TotalSupplyShares, // Tracks yield shares for suppliers
 }
 
 // Custom contract errors
@@ -79,6 +80,7 @@ impl LendingPoolContract {
         env.storage().instance().set(&DataKey::Token, &token);
         env.storage().instance().set(&DataKey::TotalLiquidity, &0i128);
         env.storage().instance().set(&DataKey::TotalBorrowed, &0i128);
+        env.storage().instance().set(&DataKey::TotalSupplyShares, &0i128);
         
         env.storage().instance().extend_ttl(MIN_TTL, EXTEND_TO);
     }
@@ -108,20 +110,35 @@ impl LendingPoolContract {
         // Execute token transfer: user -> contract
         client.transfer(&user, &env.current_contract_address(), &amount);
 
-        // Calculate and save user balance
+        // Calculate pool totals
+        let total_key = DataKey::TotalLiquidity;
+        let current_total: i128 = env.storage().instance().get(&total_key).unwrap_or(0);
+        let current_borrowed: i128 = env.storage().instance().get(&DataKey::TotalBorrowed).unwrap_or(0);
+        let total_assets = current_total + current_borrowed;
+        
+        let shares_key = DataKey::TotalSupplyShares;
+        let total_shares: i128 = env.storage().instance().get(&shares_key).unwrap_or(0);
+
+        let shares_to_mint = if total_shares == 0 || total_assets == 0 {
+            amount
+        } else {
+            (amount * total_shares) / total_assets
+        };
+
+        // Calculate and save user shares
         let user_key = DataKey::Balance(user.clone());
-        let current_balance: i128 = env.storage().persistent().get(&user_key).unwrap_or(0);
-        let new_balance = current_balance + amount;
-        env.storage().persistent().set(&user_key, &new_balance);
+        let current_shares: i128 = env.storage().persistent().get(&user_key).unwrap_or(0);
+        let new_shares = current_shares + shares_to_mint;
+        env.storage().persistent().set(&user_key, &new_shares);
 
         // Extend balance storage TTL
         env.storage().persistent().extend_ttl(&user_key, MIN_TTL, EXTEND_TO);
 
-        // Update total pool liquidity (cash reserve)
-        let total_key = DataKey::TotalLiquidity;
-        let current_total: i128 = env.storage().instance().get(&total_key).unwrap_or(0);
+        // Update total pool liquidity (cash reserve) and shares
         let new_total = current_total + amount;
         env.storage().instance().set(&total_key, &new_total);
+        let new_total_shares = total_shares + shares_to_mint;
+        env.storage().instance().set(&shares_key, &new_total_shares);
 
         // Extend instance storage TTL
         env.storage().instance().extend_ttl(MIN_TTL, EXTEND_TO);
@@ -129,7 +146,7 @@ impl LendingPoolContract {
         // Emit typed event
         DepositEvent { user, amount }.publish(&env);
 
-        Ok(new_balance)
+        Ok(new_shares)
     }
 
     // Withdraw collateral from the lending pool
@@ -140,15 +157,27 @@ impl LendingPoolContract {
             return Err(Error::InvalidAmount);
         }
 
+        let total_key = DataKey::TotalLiquidity;
+        let current_total: i128 = env.storage().instance().get(&total_key).unwrap_or(0);
+        let current_borrowed: i128 = env.storage().instance().get(&DataKey::TotalBorrowed).unwrap_or(0);
+        let total_assets = current_total + current_borrowed;
+
+        let shares_key = DataKey::TotalSupplyShares;
+        let total_shares: i128 = env.storage().instance().get(&shares_key).unwrap_or(0);
+        if total_shares == 0 || total_assets == 0 {
+            return Err(Error::InsufficientBalance);
+        }
+
         let user_key = DataKey::Balance(user.clone());
-        let current_balance: i128 = env.storage().persistent().get(&user_key).unwrap_or(0);
-        if current_balance < amount {
+        let current_shares: i128 = env.storage().persistent().get(&user_key).unwrap_or(0);
+        
+        let shares_to_burn = (amount * total_shares + total_assets - 1) / total_assets;
+
+        if current_shares < shares_to_burn {
             return Err(Error::InsufficientBalance);
         }
 
         // Check if there is enough cash in the contract (total liquidity)
-        let total_key = DataKey::TotalLiquidity;
-        let current_total: i128 = env.storage().instance().get(&total_key).unwrap_or(0);
         if current_total < amount {
             return Err(Error::InsufficientBalance);
         }
@@ -160,18 +189,20 @@ impl LendingPoolContract {
         // Execute token transfer: contract -> user
         client.transfer(&env.current_contract_address(), &user, &amount);
 
-        // Update user balance
-        let new_balance = current_balance - amount;
-        if new_balance == 0 {
+        // Update user shares
+        let new_shares = current_shares - shares_to_burn;
+        if new_shares == 0 {
             env.storage().persistent().remove(&user_key);
         } else {
-            env.storage().persistent().set(&user_key, &new_balance);
+            env.storage().persistent().set(&user_key, &new_shares);
             env.storage().persistent().extend_ttl(&user_key, MIN_TTL, EXTEND_TO);
         }
 
-        // Update total pool liquidity
+        // Update total pool liquidity and shares
         let new_total = current_total - amount;
         env.storage().instance().set(&total_key, &new_total);
+        let new_total_shares = total_shares - shares_to_burn;
+        env.storage().instance().set(&shares_key, &new_total_shares);
 
         // Extend instance storage TTL
         env.storage().instance().extend_ttl(MIN_TTL, EXTEND_TO);
@@ -179,7 +210,7 @@ impl LendingPoolContract {
         // Emit typed event
         WithdrawEvent { user, amount }.publish(&env);
 
-        Ok(new_balance)
+        Ok(new_shares)
     }
 
     // Borrow assets from the pool (Callable only by the authorized Leverage Engine)
@@ -224,32 +255,31 @@ impl LendingPoolContract {
         Ok(())
     }
 
-    // Repay assets back to the pool (Callable only by the authorized Leverage Engine)
-    // Expects tokens to have already been transferred to this contract's address
-    pub fn repay(env: Env, user: Address, amount: i128) -> Result<(), Error> {
+    // Repay assets back to the pool and write off specific debt amounts
+    pub fn repay(env: Env, user: Address, payment_amount: i128, debt_cleared: i128) -> Result<(), Error> {
         let leverage_engine: Address = env.storage().instance().get(&DataKey::LeverageEngine).ok_or(Error::NotAuthorized)?;
         leverage_engine.require_auth();
 
-        if amount <= 0 {
+        if payment_amount < 0 || debt_cleared < 0 {
             return Err(Error::InvalidAmount);
         }
 
         // Update balances (tokens already transferred by leverage engine caller)
         let total_key = DataKey::TotalLiquidity;
         let current_total: i128 = env.storage().instance().get(&total_key).unwrap_or(0);
-        let new_liquidity = current_total + amount;
+        let new_liquidity = current_total + payment_amount;
         env.storage().instance().set(&total_key, &new_liquidity);
 
         let borrow_key = DataKey::TotalBorrowed;
         let current_borrowed: i128 = env.storage().instance().get(&borrow_key).unwrap_or(0);
-        let new_borrowed = if current_borrowed < amount { 0 } else { current_borrowed - amount };
+        let new_borrowed = if current_borrowed < debt_cleared { 0 } else { current_borrowed - debt_cleared };
         env.storage().instance().set(&borrow_key, &new_borrowed);
 
         // Extend instance storage TTL
         env.storage().instance().extend_ttl(MIN_TTL, EXTEND_TO);
 
         // Emit repay event
-        RepayEvent { user, amount }.publish(&env);
+        RepayEvent { user, amount: payment_amount }.publish(&env);
 
         Ok(())
     }
@@ -270,10 +300,23 @@ impl LendingPoolContract {
         base_rate + (borrowed * slope) / total_assets
     }
 
-    // Query balance of a specific user
+    // Query balance of a specific user in underlying assets
     pub fn get_balance(env: Env, user: Address) -> i128 {
         let user_key = DataKey::Balance(user);
-        env.storage().persistent().get(&user_key).unwrap_or(0)
+        let shares: i128 = env.storage().persistent().get(&user_key).unwrap_or(0);
+        if shares == 0 {
+            return 0;
+        }
+        let current_total: i128 = env.storage().instance().get(&DataKey::TotalLiquidity).unwrap_or(0);
+        let current_borrowed: i128 = env.storage().instance().get(&DataKey::TotalBorrowed).unwrap_or(0);
+        let total_assets = current_total + current_borrowed;
+        let total_shares: i128 = env.storage().instance().get(&DataKey::TotalSupplyShares).unwrap_or(0);
+        
+        if total_shares == 0 {
+            0
+        } else {
+            (shares * total_assets) / total_shares
+        }
     }
 
     // Query total pool liquidity (available cash)
