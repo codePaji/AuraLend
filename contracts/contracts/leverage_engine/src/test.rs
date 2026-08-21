@@ -231,3 +231,59 @@ fn test_health_factor_boundary() {
     // Verify get_min_collateral returns the expected protocol constant
     assert_eq!(engine_client.get_min_collateral(), 10_000_000);
 }
+
+#[test]
+fn test_liquidation_underwater_position() {
+    let env = Env::default();
+    env.mock_all_auths();
+
+    let admin = Address::generate(&env);
+    let user = Address::generate(&env);
+    let liquidator = Address::generate(&env);
+    let lender = Address::generate(&env);
+
+    let token_a_id = env.register_stellar_asset_contract_v2(admin.clone()).address();
+    let token_b_id = env.register_stellar_asset_contract_v2(admin.clone()).address();
+
+    let token_a_client = TokenClient::new(&env, &token_a_id);
+    let token_a_admin = soroban_sdk::token::StellarAssetClient::new(&env, &token_a_id);
+    let token_b_admin = soroban_sdk::token::StellarAssetClient::new(&env, &token_b_id);
+
+    let pool_id = env.register(lending_pool::LendingPoolContract, (admin.clone(), token_a_id.clone()));
+    let pool_client = lending_pool::LendingPoolContractClient::new(&env, &pool_id);
+
+    let amm_id = env.register(mock_amm::MockAmmContract, (token_a_id.clone(), token_b_id.clone()));
+    let engine_id = env.register(
+        LeverageEngineContract,
+        (admin.clone(), token_a_id.clone(), token_b_id.clone(), pool_id.clone(), amm_id.clone()),
+    );
+    let engine_client = LeverageEngineContractClient::new(&env, &engine_id);
+    pool_client.set_leverage_engine(&engine_id);
+
+    token_a_admin.mint(&lender, &5_000_000_000);
+    token_a_admin.mint(&amm_id, &5_000_000_000);
+    token_b_admin.mint(&amm_id, &5_000_000_000);
+    pool_client.deposit(&lender, &5_000_000_000);
+
+    token_a_admin.mint(&user, &100_000_000);
+    
+    // Open position with high leverage (6x)
+    engine_client.open_position(&user, &100_000_000, &600u32); // Borrow 500M
+    
+    // Artificially hike AMM slippage/fee to 25% to force severe bad debt on unwind
+    let amm_client = mock_amm::MockAmmContractClient::new(&env, &amm_id);
+    amm_client.set_fee(&25);
+
+    // Position is heavily underwater because swap back will lose 25%
+    let health = engine_client.get_health_factor(&user);
+    assert!(health < 100);
+
+    // Liquidate the underwater position - it should not panic
+    engine_client.liquidate(&user, &liquidator);
+
+    // Position should be removed
+    assert!(engine_client.get_position(&user).is_none());
+
+    // User gets nothing (0 refund) since all margin was consumed by bad debt
+    assert_eq!(token_a_client.balance(&user), 0);
+}

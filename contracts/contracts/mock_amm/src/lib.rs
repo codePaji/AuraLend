@@ -12,6 +12,7 @@ pub enum DataKey {
     TokenB,
     TotalShares,
     LpBalance(Address),
+    Fee,
 }
 
 #[contracterror]
@@ -36,6 +37,11 @@ impl MockAmmContract {
         env.storage().instance().set(&DataKey::TokenA, &token_a);
         env.storage().instance().set(&DataKey::TokenB, &token_b);
         env.storage().instance().set(&DataKey::TotalShares, &0i128);
+        env.storage().instance().set(&DataKey::Fee, &0i128); // 0 by default
+    }
+
+    pub fn set_fee(env: Env, fee: i128) {
+        env.storage().instance().set(&DataKey::Fee, &fee);
     }
 
     // Swaps token_in for token_out (1:1 mock exchange)
@@ -59,7 +65,8 @@ impl MockAmmContract {
         }
 
         let client_out = TokenClient::new(&env, &token_out);
-        let amount_out = amount_in;
+        let fee: i128 = env.storage().instance().get(&DataKey::Fee).unwrap_or(0);
+        let amount_out = (amount_in * (100 - fee)) / 100;
 
         // Transfer output token: AMM -> user (or leverage engine)
         client_out.transfer(&env.current_contract_address(), &user, &amount_out);
