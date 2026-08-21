@@ -68,7 +68,7 @@ pub struct Liquidated {
 #[soroban_sdk::contractclient(name = "LendingPoolClient")]
 pub trait LendingPool {
     fn borrow(env: &Env, user: &Address, amount: &i128);
-    fn repay(env: &Env, user: &Address, amount: &i128);
+    fn repay(env: &Env, user: &Address, payment_amount: &i128, debt_cleared: &i128);
 }
 
 #[soroban_sdk::contractclient(name = "MockAmmClient")]
@@ -205,8 +205,15 @@ impl LeverageEngineContract {
         let debt_repayment = pos.borrow_amount + interest;
 
         // Transfer funds directly to pool first, then trigger pool repay recording
-        client_a.transfer(&env.current_contract_address(), &pool_addr, &debt_repayment);
-        pool_client.repay(&user, &debt_repayment);
+        // Write off bad debt if total_a is insufficient
+        let actual_repayment = if total_a > debt_repayment { debt_repayment } else { total_a };
+        if actual_repayment > 0 {
+            client_a.transfer(&env.current_contract_address(), &pool_addr, &actual_repayment);
+            pool_client.repay(&user, &actual_repayment, &debt_repayment);
+        } else {
+            // Even if we transferred nothing, clear the debt from the pool's books (bad debt)
+            pool_client.repay(&user, &0, &debt_repayment);
+        }
 
         // 4. Return remaining USDC payout to the user
         let payout = if total_a > debt_repayment { total_a - debt_repayment } else { 0 };
@@ -268,8 +275,14 @@ impl LeverageEngineContract {
         let debt_repayment = pos.borrow_amount + interest;
 
         // Transfer funds directly to pool first
-        client_a.transfer(&env.current_contract_address(), &pool_addr, &debt_repayment);
-        pool_client.repay(&user, &debt_repayment);
+        // Write off bad debt if total_a is insufficient
+        let actual_repayment = if total_a > debt_repayment { debt_repayment } else { total_a };
+        if actual_repayment > 0 {
+            client_a.transfer(&env.current_contract_address(), &pool_addr, &actual_repayment);
+            pool_client.repay(&user, &actual_repayment, &debt_repayment);
+        } else {
+            pool_client.repay(&user, &0, &debt_repayment);
+        }
 
         // 4. Calculate liquidator payout (10% reward of remaining margin)
         let remaining = if total_a > debt_repayment { total_a - debt_repayment } else { 0 };
